@@ -1,3 +1,18 @@
+function Prompt-ForInput {
+    param (
+        [string]$PromptText,
+        [string]$DefaultValue
+    )
+    do {
+        $input = Read-Host -Prompt $PromptText
+        if ([string]::IsNullOrWhiteSpace($input) -and -not [string]::IsNullOrWhiteSpace($DefaultValue)) {
+            $input = $DefaultValue
+        }
+    }
+    while ([string]::IsNullOrWhiteSpace($input))
+    return $input
+}
+
 # Ask for the Flutter project name
 $projectName = Read-Host "Enter the name for your Flutter project"
 $projectName = Prompt-ForInput -PromptText "Enter the name for your Flutter project" -DefaultValue ""
