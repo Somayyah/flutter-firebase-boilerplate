@@ -24,7 +24,7 @@ $basePackageName = Prompt-ForInput -PromptText "Enter the base package name (def
 $packageName = $basePackageName + "." + $projectName
 
 flutter pub global activate rename
-flutter pub global run rename --bundleId $packageName
+flutter pub global rename setBundleId --targets android --value $packageName
 
 flutterfire configure
 
