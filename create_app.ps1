@@ -56,35 +56,49 @@ foreach ($folder in $folders) {
     New-Item -ItemType Directory -Path $folder -Force
 }
 
-# Define and create the file structure
-$files = @{
-    "$baseDir\auth\signin.dart" = $null;
-    "$baseDir\auth\signup.dart" = $null;
-    "$baseDir\firebase_options.dart" = $null;
-    "$baseDir\firestoredb\user_repository.dart" = $null;
-    "$baseDir\functionality.dart" = $null;
-    "$baseDir\main.dart" = $null;
-    "$baseDir\pages\dashboard.dart" = $null;
-    "$baseDir\pages\feedback-support.dart" = $null;
-    "$baseDir\pages\mainscreen.dart" = $null;
-    "$baseDir\pages\onboarding.dart" = $null;
-    "$baseDir\pages\payment.dart" = $null;
-    "$baseDir\pages\settings.dart" = $null;
-    "$baseDir\pages\signin-up.dart" = $null;
-    "$baseDir\pages\splash.dart" = $null;
-    "$baseDir\theming\borders.dart" = $null;
-    "$baseDir\theming\colors.dart" = $null;
-    "$baseDir\theming\fonts.dart" = $null;
-    "$baseDir\theming\icons.dart" = $null;
-    "$baseDir\widgets\application.dart" = $null;
-    "$baseDir\widgets\app_settings.dart" = $null;
-    "$baseDir\widgets\buttons.dart" = $null;
-    "$baseDir\widgets\card.dart" = $null;
-    "$baseDir\widgets\user_profile.dart" = $null;
+# GitHub repository base URL for raw content
+$repoBaseURL = "https://raw.githubusercontent.com/Somayyah/flutter-firebase-boilerplate/main"
+
+# Function to fetch file content from GitHub and write to the local file
+function PopulateFileFromGitHub($localFilePath, $githubFilePath) {
+    $fullGitHubPath = $repoBaseURL + $githubFilePath
+    $content = Invoke-WebRequest -Uri $fullGitHubPath -UseBasicParsing
+    $content.Content | Out-File -FilePath $localFilePath
 }
 
-foreach ($file in $files.Keys) {
-    New-Item -ItemType File -Path $file -Force
+# File paths (relative to the lib directory) to populate
+$filePaths = @(
+    "/pages/mainscreen.dart",
+    "/auth/signin.dart",
+    "/auth/signup.dart",
+    "/firebase_options.dart",
+    "/firestoredb/user_repository.dart",
+    "/functionality.dart",
+    "/main.dart",
+    "/pages/dashboard.dart",
+    "/pages/feedback-support.dart",
+    "/pages/onboarding.dart",
+    "/pages/payment.dart",
+    "/pages/settings.dart",
+    "/pages/signin-up.dart",
+    "/pages/splash.dart",
+    "/theming/borders.dart",
+    "/theming/colors.dart",
+    "/theming/fonts.dart",
+    "/theming/icons.dart",
+    "/widgets/application.dart",
+    "/widgets/app_settings.dart",
+    "/widgets/buttons.dart",
+    "/widgets/card.dart",
+    "/widgets/user_profile.dart"
+)
+
+# Populate each file
+foreach ($filePath in $filePaths) {
+    $localFilePath = Join-Path $baseDir $filePath.Replace('/', '\')
+    $githubFilePath = "/lib" + $filePath
+
+    PopulateFileFromGitHub -localFilePath $localFilePath -githubFilePath $githubFilePath
 }
 
 # Optional: Initialize Git repository

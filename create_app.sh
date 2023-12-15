@@ -24,49 +24,65 @@ sed -i '/id "com.android.application"/a \ \ \ \ id "com.google.gms.google-servic
 echo "Please paste the contents of your google-services.json file here, then press Ctrl-D:"
 cat > android/app/google-services.json
 
+# Define the base directory (lib folder)
+baseDir="./lib"
+
 # Define and create the folder structure
 folders=(
-    "lib/assets"
-    "lib/auth"
-    "lib/firestoredb"
-    "lib/pages"
-    "lib/theming"
-    "lib/widgets"
+    "$baseDir/assets"
+    "$baseDir/auth"
+    "$baseDir/firestoredb"
+    "$baseDir/pages"
+    "$baseDir/theming"
+    "$baseDir/widgets"
 )
 
 for folder in "${folders[@]}"; do
     mkdir -p $folder
 done
 
-# Define and create the file structure
-files=(
-    "lib/auth/signin.dart"
-    "lib/auth/signup.dart"
-    "lib/firebase_options.dart"
-    "lib/firestoredb/user_repository.dart"
-    "lib/functionality.dart"
-    "lib/main.dart"
-    "lib/pages/dashboard.dart"
-    "lib/pages/feedback-support.dart"
-    "lib/pages/mainscreen.dart"
-    "lib/pages/onboarding.dart"
-    "lib/pages/payment.dart"
-    "lib/pages/settings.dart"
-    "lib/pages/signin-up.dart"
-    "lib/pages/splash.dart"
-    "lib/theming/borders.dart"
-    "lib/theming/colors.dart"
-    "lib/theming/fonts.dart"
-    "lib/theming/icons.dart"
-    "lib/widgets/application.dart"
-    "lib/widgets/app_settings.dart"
-    "lib/widgets/buttons.dart"
-    "lib/widgets/card.dart"
-    "lib/widgets/user_profile.dart"
+# GitHub repository base URL for raw content
+repoBaseURL="https://raw.githubusercontent.com/Somayyah/flutter-firebase-boilerplate/main"
+
+# Function to fetch file content from GitHub and write to the local file
+populate_file_from_github() {
+    localFilePath=$1
+    githubFilePath=$2
+    curl -s $repoBaseURL$githubFilePath -o $localFilePath
+}
+
+# File paths (relative to the lib directory) to populate
+filePaths=(
+    "/pages/mainscreen.dart"
+    "/auth/signin.dart"
+    "/auth/signup.dart"
+    "/firebase_options.dart"
+    "/firestoredb/user_repository.dart"
+    "/functionality.dart"
+    "/main.dart"
+    "/pages/dashboard.dart"
+    "/pages/feedback-support.dart"
+    "/pages/onboarding.dart"
+    "/pages/payment.dart"
+    "/pages/settings.dart"
+    "/pages/signin-up.dart"
+    "/pages/splash.dart"
+    "/theming/borders.dart"
+    "/theming/colors.dart"
+    "/theming/fonts.dart"
+    "/theming/icons.dart"
+    "/widgets/application.dart"
+    "/widgets/app_settings.dart"
+    "/widgets/buttons.dart"
+    "/widgets/card.dart"
+    "/widgets/user_profile.dart"
 )
 
-for file in "${files[@]}"; do
-    touch $file
+# Populate each file
+for filePath in "${filePaths[@]}"; do
+    localFilePath="$baseDir${filePath//\//\/}"
+    githubFilePath="/lib$filePath"
+    populate_file_from_github $localFilePath $githubFilePath
 done
 
 # Optional: Initialize Git repository
