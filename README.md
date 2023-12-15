@@ -13,5 +13,5 @@ Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Som
 With BASH:
 
 ```
-bash <(wget -qO- https://raw.githubusercontent.com/Somayyah/flutter-firebase-boilerplate/main/setup-script.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/Somayyah/flutter-firebase-boilerplate/main/create_app.sh)
 ```
