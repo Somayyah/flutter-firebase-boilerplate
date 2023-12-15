@@ -19,7 +19,7 @@ $packageName = $basePackageName + "." + $projectName
 
 # Activate and use the rename package
 flutter pub global activate rename
-flutter pub global run rename --bundleId $packageName
+rename setBundleId --targets android --value $packageName
 
 # Setup Firebase using flutterfire CLI
 flutterfire configure
