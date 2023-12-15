@@ -27,11 +27,18 @@ flutterfire configure
 # Print the package name for Firebase setup
 Write-Host "Use this package name to set up your Firebase project: $packageName"
 
-# Wait for the user to paste google-services.json content
-echo "Please paste the contents of your google-services.json file here, then press Enter:"
-$googleServicesJson = Read-Host
-$googleServicesJson | Out-File "android/app/google-services.json"
+# Instruct the user to place google-services.json in the project directory
+Write-Host "Please place your google-services.json file in the project directory and press Enter to continue..."
+Read-Host -Prompt "Press Enter after you have placed the file"
 
+# Copy google-services.json to the correct location
+$googleServicesPath = Join-Path -Path $PWD.Path -ChildPath "google-services.json"
+if (Test-Path $googleServicesPath) {
+    Copy-Item -Path $googleServicesPath -Destination "android/app/google-services.json"
+} else {
+    Write-Host "google-services.json not found. Please make sure the file is in the project directory and try again."
+    exit
+}
 # Optional: Initialize Git repository
 git init
 git add .
