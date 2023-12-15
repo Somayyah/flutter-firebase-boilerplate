@@ -2,6 +2,8 @@
 
 # Ask for the Flutter project name
 read -p "Enter the name for your Flutter project: " projectName
+# Convert to lowercase and replace spaces with underscores
+projectName=$(echo "$projectName" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
 
 # Create a new Flutter project
 flutter create $projectName

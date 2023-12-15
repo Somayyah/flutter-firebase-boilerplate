@@ -1,5 +1,8 @@
 # Ask for the Flutter project name
+
 $projectName = Read-Host "Enter the name for your Flutter project"
+# Convert to lowercase and replace spaces with underscores
+$projectName = $projectName.ToLower().Replace(" ", "_")
 
 # Create a new Flutter project
 flutter create $projectName
