@@ -40,6 +40,35 @@ flutterfire configure
 
 echo "Use this package name to set up your Firebase project: $package_name"
 
+#!/bin/bash
+
+# Function to add a Flutter package using 'flutter pub add'
+add_flutter_package() {
+    package_name=$1
+    flutter pub add "$package_name"
+}
+
+# List of Firebase packages
+firebase_packages=(
+    "firebase_core"
+    "firebase_auth"
+    "cloud_firestore"
+    "firebase_storage"
+    "firebase_messaging"
+    "firebase_analytics"
+    "firebase_crashlytics"
+    "firebase_dynamic_links"
+    "firebase_remote_config"
+)
+
+# Adding each Firebase package
+for package in "${firebase_packages[@]}"; do
+    add_flutter_package "$package"
+done
+
+# Display completion message
+echo "Firebase packages have been added to your Flutter project."
+
 # Define the base directory (lib folder)
 base_dir="./lib"
 

@@ -30,6 +30,37 @@ flutterfire configure
 
 Write-Host "Use this package name to set up your Firebase project: $packageName"
 
+# PowerShell script to add Firebase packages to a Flutter project
+
+# Function to add a Flutter package using 'flutter pub add'
+function Add-FlutterPackage {
+    param (
+        [string]$packageName
+    )
+    flutter pub add $packageName
+}
+
+# List of Firebase packages
+$firebasePackages = @(
+    "firebase_core",
+    "firebase_auth",
+    "cloud_firestore",
+    "firebase_storage",
+    "firebase_messaging",
+    "firebase_analytics",
+    "firebase_crashlytics",
+    "firebase_dynamic_links",
+    "firebase_remote_config"
+)
+
+# Adding each Firebase package
+foreach ($package in $firebasePackages) {
+    Add-FlutterPackage -packageName $package
+}
+
+# Display completion message
+Write-Host "Firebase packages have been added to your Flutter project."
+
 # Define the base directory (lib folder)
 $baseDir = ".\lib"
 
@@ -77,7 +108,9 @@ $filePaths = @(
     "widgets/app_settings.dart",
     "widgets/buttons.dart",
     "widgets/card.dart",
-    "widgets/user_profile.dart"
+    "widgets/user_profile.dart",
+    "main.dart",
+    "functionality.dart"
 )
 
 # Populate each file
