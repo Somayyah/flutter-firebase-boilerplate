@@ -120,6 +120,44 @@ foreach ($filePath in $filePaths) {
     PopulateFileFromGitHub -localFilePath $localFilePath -githubFilePath $filePath
 }
 
+# Add MultiDex support
+
+$buildGradlePath = "android\app\build.gradle" # Update this path to the actual path of your build.gradle file
+
+# Read the contents of the build.gradle file
+$buildGradleContent = Get-Content $buildGradlePath
+
+# Function to insert a line after a specific pattern
+function Insert-LineAfter {
+    param (
+        [Parameter(Mandatory=$true)][string]$Text,
+        [Parameter(Mandatory=$true)][string]$Pattern,
+        [Parameter(Mandatory=$true)][string]$NewLine
+    )
+
+    $updated = $false
+    $result = foreach ($line in $Text) {
+        if ($updated -or -not $line -match $Pattern) {
+            $line
+        } else {
+            $updated = $true
+            $line, $NewLine
+        }
+    }
+
+    return $result
+}
+
+# Add 'multiDexEnabled true' to the defaultConfig section
+$buildGradleContent = Insert-LineAfter -Text $buildGradleContent -Pattern '^\s*defaultConfig \{' -NewLine '        multiDexEnabled true'
+
+# Add 'implementation 'com.android.support:multidex:1.0.3'' to the dependencies section
+$buildGradleContent = Insert-LineAfter -Text $buildGradleContent -Pattern '^\s*dependencies \{' -NewLine "    implementation 'com.android.support:multidex:1.0.3'"
+
+# Write the updated content back to the build.gradle file
+$buildGradleContent | Set-Content $buildGradlePath
+
+# Add GIT support
 git init
 git add .
 git commit -m "Initial project setup with script"

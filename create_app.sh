@@ -129,6 +129,17 @@ for file_path in "${file_paths[@]}"; do
     populate_file_from_github "$local_file_path" "$file_path"
 done
 
+#!/bin/bash
+
+# Path to your build.gradle file
+buildGradlePath="android/app/build.gradle" # Update this path
+
+# Add 'multiDexEnabled true' to the defaultConfig section
+sed -i '/defaultConfig {/a \ \ \ \ multiDexEnabled true' "$buildGradlePath"
+
+# Add 'implementation 'com.android.support:multidex:1.0.3'' to the dependencies section
+sed -i "/dependencies {/a \ \ \ \ implementation 'com.android.support:multidex:1.0.3'" "$buildGradlePath"
+
 # Git setup
 git init
 git add .
