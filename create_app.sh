@@ -58,7 +58,8 @@ firebase_packages=(
     "firebase_analytics"
     "firebase_crashlytics"
     "firebase_dynamic_links"
-    "firebase_remote_config"
+    "firebase_remote_config", 
+    "uuid"
 )
 
 # Adding each Firebase package
