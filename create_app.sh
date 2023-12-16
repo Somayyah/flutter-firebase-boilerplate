@@ -1,96 +1,107 @@
 #!/bin/bash
 
-# Ask for the Flutter project name
-read -p "Enter the name for your Flutter project: " projectName
-# Convert to lowercase and replace spaces with underscores
-projectName=$(echo "$projectName" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+# Function to prompt for input with a default value
+prompt_for_input() {
+    local prompt_text=$1
+    local default_value=$2
+    local input
 
-# Create a new Flutter project
-flutter create $projectName
+    while true; do
+        read -p "$prompt_text" input
+        if [[ -z "$input" ]] && [[ -n "$default_value" ]]; then
+            input=$default_value
+        fi
+        if [[ -n "$input" ]]; then
+            break
+        fi
+    done
 
-# Change directory to the new project
-cd $projectName
+    echo "$input"
+}
 
-# Setup Firebase using flutterfire CLI
+# Get the project name
+project_name=$(prompt_for_input "Enter the name for your Flutter project: " "")
+project_name=$(echo "$project_name" | tr '[:upper:]' '[:lower:]' | sed 's/ /_/g')
+
+# Create Flutter project
+flutter create "$project_name"
+cd "$project_name" || exit
+
+# Get the base package name
+base_package_name=$(prompt_for_input "Enter the base package name (default: com.example): " "com.example")
+package_name="${base_package_name}.${project_name}"
+
+# Activate and rename package
+flutter pub global activate rename
+flutter pub global run rename --bundleId "$package_name"
+
+# FlutterFire configuration
 flutterfire configure
 
-# Modify project-level build.gradle
-projectBuildGradle="android/build.gradle"
-sed -i '/classpath "com.android.tools.build:gradle:.*/a \ \ \ \ classpath "com.google.gms:google-services:4.4.0"\n\ \ \ \ classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.9"\n\ \ \ \ classpath "com.google.firebase:firebase-appdistribution-gradle:4.0.1"\n\ \ \ \ classpath "com.google.firebase:perf-plugin:1.4.2"' $projectBuildGradle
-
-# Modify app-level build.gradle
-appBuildGradle="android/app/build.gradle"
-sed -i '/id "com.android.application"/a \ \ \ \ id "com.google.gms.google-services"\n\ \ \ \ id "com.google.firebase.appdistribution"\n\ \ \ \ id "com.google.firebase.crashlytics"\n\ \ \ \ id "com.google.firebase.firebase-perf"' $appBuildGradle
-
-# Ask the user to paste the contents of google-services.json
-echo "Please paste the contents of your google-services.json file here, then press Ctrl-D:"
-cat > android/app/google-services.json
+echo "Use this package name to set up your Firebase project: $package_name"
 
 # Define the base directory (lib folder)
-baseDir="./lib"
+base_dir="./lib"
 
 # Define and create the folder structure
 folders=(
-    "$baseDir/assets"
-    "$baseDir/auth"
-    "$baseDir/firestoredb"
-    "$baseDir/pages"
-    "$baseDir/theming"
-    "$baseDir/widgets"
+    "$base_dir/assets"
+    "$base_dir/auth"
+    "$base_dir/firestoredb"
+    "$base_dir/pages"
+    "$base_dir/theming"
+    "$base_dir/widgets"
 )
 
 for folder in "${folders[@]}"; do
-    mkdir -p $folder
+    mkdir -p "$folder"
 done
 
 # GitHub repository base URL for raw content
-repoBaseURL="https://raw.githubusercontent.com/Somayyah/flutter-firebase-boilerplate/main"
+repo_base_url="https://raw.githubusercontent.com/Somayyah/flutter-firebase-boilerplate/main/lib/"
 
 # Function to fetch file content from GitHub and write to the local file
 populate_file_from_github() {
-    localFilePath=$1
-    githubFilePath=$2
-    curl -s $repoBaseURL$githubFilePath -o $localFilePath
+    local local_file_path=$1
+    local github_file_path=$2
+    local full_github_path="${repo_base_url}${github_file_path}"
+
+    echo "Attempting to download from: $full_github_path"
+    curl -o "$local_file_path" "$full_github_path"
 }
 
 # File paths (relative to the lib directory) to populate
-filePaths=(
-    "/pages/mainscreen.dart"
-    "/auth/signin.dart"
-    "/auth/signup.dart"
-    "/firebase_options.dart"
-    "/firestoredb/user_repository.dart"
-    "/functionality.dart"
-    "/main.dart"
-    "/pages/dashboard.dart"
-    "/pages/feedback-support.dart"
-    "/pages/onboarding.dart"
-    "/pages/payment.dart"
-    "/pages/settings.dart"
-    "/pages/signin-up.dart"
-    "/pages/splash.dart"
-    "/theming/borders.dart"
-    "/theming/colors.dart"
-    "/theming/fonts.dart"
-    "/theming/icons.dart"
-    "/widgets/application.dart"
-    "/widgets/app_settings.dart"
-    "/widgets/buttons.dart"
-    "/widgets/card.dart"
-    "/widgets/user_profile.dart"
+file_paths=(
+    "auth/signin.dart"
+    "auth/signup.dart"
+    "firestoredb/user_repository.dart"
+    "pages/dashboard.dart"
+    "pages/feedback-support.dart"
+    "pages/mainscreen.dart"
+    "pages/onboarding.dart"
+    "pages/payment.dart"
+    "pages/settings.dart"
+    "pages/signin-up.dart"
+    "pages/splash.dart"
+    "theming/borders.dart"
+    "theming/colors.dart"
+    "theming/fonts.dart"
+    "theming/icons.dart"
+    "widgets/app_settings.dart"
+    "widgets/buttons.dart"
+    "widgets/card.dart"
+    "widgets/user_profile.dart"
 )
 
 # Populate each file
-for filePath in "${filePaths[@]}"; do
-    localFilePath="$baseDir${filePath//\//\/}"
-    githubFilePath="/lib$filePath"
-    populate_file_from_github $localFilePath $githubFilePath
+for file_path in "${file_paths[@]}"; do
+    local_file_path="${base_dir}/${file_path}"
+    populate_file_from_github "$local_file_path" "$file_path"
 done
 
-# Optional: Initialize Git repository
+# Git setup
 git init
 git add .
 git commit -m "Initial project setup with script"
 
-# End of the script
 echo "Flutter project setup is complete!"
