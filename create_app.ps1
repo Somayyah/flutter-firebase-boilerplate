@@ -53,15 +53,14 @@ $repoBaseURL = "https://raw.githubusercontent.com/Somayyah/flutter-firebase-boil
 # Function to fetch file content from GitHub and write to the local file
 function PopulateFileFromGitHub($localFilePath, $githubFilePath) {
     $fullGitHubPath = $repoBaseURL + $githubFilePath
+    Write-Host "Attempting to download from: $fullGitHubPath"
     Invoke-WebRequest -Uri $fullGitHubPath -OutFile $localFilePath
 }
 
 # File paths (relative to the lib directory) to populate
 $filePaths = @(
-    "assets",
     "auth/signin.dart",
     "auth/signup.dart",
-    "firebase_options.dart",
     "firestoredb/user_repository.dart",
     "pages/dashboard.dart",
     "pages/feedback-support.dart",
@@ -75,7 +74,6 @@ $filePaths = @(
     "theming/colors.dart",
     "theming/fonts.dart",
     "theming/icons.dart",
-    "widgets/application.dart",
     "widgets/app_settings.dart",
     "widgets/buttons.dart",
     "widgets/card.dart",
