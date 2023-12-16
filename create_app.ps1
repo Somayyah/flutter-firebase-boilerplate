@@ -86,18 +86,6 @@ foreach ($filePath in $filePaths) {
     PopulateFileFromGitHub -localFilePath $localFilePath -githubFilePath $filePath
 }
 
-# Additional steps for handling google-services.json and Git setup
-Write-Host "Please place your google-services.json file in the project directory and press Enter to continue..."
-Read-Host -Prompt "Press Enter after you have placed the file"
-
-$googleServicesPath = Join-Path -Path $PWD.Path -ChildPath "google-services.json"
-if (Test-Path $googleServicesPath) {
-    Copy-Item -Path $googleServicesPath -Destination "android/app/google-services.json"
-} else {
-    Write-Host "google-services.json not found. Please make sure the file is in the project directory and try again."
-    exit
-}
-
 git init
 git add .
 git commit -m "Initial project setup with script"
